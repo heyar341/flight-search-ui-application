@@ -20,10 +20,10 @@ services:
     ports:
       - "5000:5000"
     volumes:
-     - ./uiapp:/app/uiapp
-     - static_dir:/app/uiapp/static
+      - ./uiapp:/app/uiapp
+      - static_dir:/app/uiapp/static
     depends_on:
-     - db
+      - db
   db:
     container_name: uiapp_db
     image: postgres:14.1-alpine
@@ -31,6 +31,23 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
 
+  pgadmin:
+    image: dpage/pgadmin4:6.4
+    container_name: uiapp_pgadmin
+    ports:
+      - "7002:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: example@example.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    hostname: pgadmin4
+    depends_on:
+      - db
+    restart: always
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+
 volumes:
   static_dir:
   postgres_data:
+  pgadmin-data:

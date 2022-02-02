@@ -74,8 +74,12 @@ WSGI_APPLICATION = 'uiapp.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': environ.get("DB_NAME"),
+        'USER': environ.get("DB_USERNAME"),
+        'PASSWORD': environ.get("DB_PASSWORD"),
+        'HOST': environ.get("DB_HOST"),
+        'PORT': environ.get("DB_PORT"),
     }
 }
 
@@ -119,7 +123,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
