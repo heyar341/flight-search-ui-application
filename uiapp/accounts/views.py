@@ -6,11 +6,28 @@ from os import environ
 import requests
 import logging
 
-from .forms import RegisterForm
-
-USER_SERVICE_ENDPOINT = environ["USER_SERVICE_ENDPOINT"]
+from .forms import RegisterForm, PreRegisterForm
+from .publisher import publish_message
 
 logger = logging.getLogger(__name__)
+
+
+class PreRegistrationView(FormView):
+    template_name = "accounts/pre_register.html"
+    form_class = PreRegisterForm
+    success_url = "pre_register_success"
+
+    def form_valid(self,
+                   form: RegisterForm) -> django.http.response.HttpResponse:
+        email_address = form.cleaned_data["email"]
+        queue_name = environ.get("EMAIL_REGISTER_QUEUE_NAME")
+        publish_message(email=email_address, queue_name=queue_name)
+        return HttpResponseRedirect(self.get_success_url())
+
+
+def pre_register_success(
+        request: django.http.HttpRequest) -> django.http.response.HttpResponse:
+    return render(request, "accounts/pre_register_success.html", None)
 
 
 class RegistrationView(FormView):
@@ -23,8 +40,10 @@ class RegistrationView(FormView):
         user_data = form.cleaned_data
         user_data["password"] = user_data.pop("password1")
         user_data.pop("password2")
+        user_service_endpoint = environ.get("USER_SERVICE_ENDPOINT")
+
         try:
-            response = requests.post(url=USER_SERVICE_ENDPOINT + "/register",
+            response = requests.post(url=user_service_endpoint + "/register",
                                      json=user_data, timeout=3.0)
         except requests.ConnectionError as e:
             logger.error(
@@ -44,5 +63,6 @@ class RegistrationView(FormView):
                 super().get_context_data(form=form))
 
 
-def register_success(request):
+def register_success(
+        request: django.http.HttpRequest) -> django.http.response.HttpResponse:
     return render(request, "accounts/register_success.html", None)
