@@ -1,10 +1,11 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from django.forms import EmailField, Form, EmailInput, HiddenInput, CharField
+from django.forms import (EmailField, Form, EmailInput, HiddenInput, CharField,
+                          PasswordInput)
 
 
 class PreRegisterForm(Form):
-    email = EmailField(label="Email", widget=EmailInput)
+    email = EmailField(label="Email", widget=EmailInput())
 
 
 class RegisterForm(UserCreationForm):
@@ -17,3 +18,8 @@ class RegisterForm(UserCreationForm):
 
     def save(self, commit=None):
         pass
+
+
+class LoginForm(Form):
+    email = EmailField(label="Email", widget=EmailInput())
+    password = CharField(label="Password", widget=PasswordInput())
