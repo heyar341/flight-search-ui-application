@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from django.forms import EmailField, Form, EmailInput
+from django.forms import EmailField, Form, EmailInput, HiddenInput, CharField
 
 
 class PreRegisterForm(Form):
@@ -8,11 +8,12 @@ class PreRegisterForm(Form):
 
 
 class RegisterForm(UserCreationForm):
-    email = EmailField(label="Email", widget=EmailInput)
+    email = EmailField(widget=HiddenInput())
+    email_token = CharField(widget=HiddenInput())
 
     class Meta:
         model = User
-        fields = ("username", "email", "password1", "password2")
+        fields = ("username", "email", "password1", "password2", "email_token")
 
     def save(self, commit=None):
         pass
