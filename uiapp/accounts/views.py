@@ -35,6 +35,14 @@ class RegistrationView(FormView):
     form_class = RegisterForm
     success_url = "register_success"
 
+    def get(self, request, *args, **kwargs):
+        email = request.GET.get("email")
+        email_token = request.GET.get("email_token")
+        form = self.form_class(
+            initial={"email": email, "email_token": email_token})
+        return render(request, self.template_name,
+                      {"email": email, "form": form})
+
     def form_valid(self,
                    form: RegisterForm) -> django.http.response.HttpResponse:
         user_data = form.cleaned_data
