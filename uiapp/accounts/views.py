@@ -4,6 +4,7 @@ from django.views.generic.edit import FormView
 from django.http import HttpResponseRedirect
 from os import environ
 from datetime import timedelta
+from socket import gaierror
 import requests
 import logging
 
@@ -22,7 +23,11 @@ class PreRegistrationView(FormView):
                    form: PreRegisterForm) -> django.http.response.HttpResponse:
         email_address = form.cleaned_data["email"]
         queue_name = environ.get("EMAIL_REGISTER_QUEUE_NAME")
-        publish_message(email=email_address, queue_name=queue_name)
+        try:
+            publish_message(email=email_address, queue_name=queue_name)
+        except gaierror as e:
+            logger.error(
+                f"Error while sending RabbitMQ email message.{e}")
         return HttpResponseRedirect(self.get_success_url())
 
 
