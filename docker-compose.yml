@@ -24,6 +24,9 @@ services:
       - static_dir:/app/uiapp/static
     depends_on:
       - db
+    networks:
+      - default
+      - flight_search_microservices
   db:
     container_name: uiapp_db
     image: postgres:14.1-alpine
@@ -51,3 +54,9 @@ volumes:
   static_dir:
   postgres_data:
   pgadmin-data:
+
+
+networks:
+  flight_search_microservices:
+    external:
+      name: flight_search_microservices

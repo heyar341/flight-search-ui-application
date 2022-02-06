@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>新規ユーザー登録</title>
+</head>
+<body>
+<form method="post" action="{% url 'register' %}">
+    {% csrf_token %}
+    {% autoescape on %}
+        {% for hidden_field in form.hidden_fields %}
+            {{ hidden_field }}
+        {% endfor %}
+    {% endautoescape %}
+    <table>
+    <tr>
+        <span>Email:{{ email }}</span>
+    </tr>
+        {% for field in form.visible_fields %}
+            <tr>
+                <th>{{ field.label_tag }}</th>
+                <td>
+                    {{ field.errors }}
+                    {{ field }}
+{#                    {{ field.help_text }}#}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    <input type="submit" value="送信">
+</form>
+</body>
+</html>
